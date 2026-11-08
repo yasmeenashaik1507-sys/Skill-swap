@@ -1,107 +1,91 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SkillSwap — Share • Learn • Grow</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#5b4bdb">
+  <title>SkillSwap — Learn Together</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <a class="brand" href="#"><span class="brand-mark">S</span><span>Skill<span class="brand-accent">Swap</span><small>SHARE • LEARN • GROW</small></span></a>
-      <nav>
-        <button class="nav-link active" data-page="dashboard">▦ <span>Dashboard</span></button>
-        <button class="nav-link" data-page="profile">✎ <span>My Skills</span></button>
-        <button class="nav-link" data-page="people">◎ <span>Explore People</span></button>
-        <button class="nav-link" data-page="matches">⇄ <span>My Matches</span><b id="match-count" class="nav-count">0</b></button>
-      </nav>
-      <div class="sidebar-bottom">
-        <div class="mini-note"><strong>Grow together.</strong><p>One skill shared can open a new world.</p></div>
-        <button id="logout-btn" class="logout hidden">↪ Log out</button>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">S</span><span>Skill<span class="brand-accent">Swap</span></span></a>
+    <nav id="nav" class="hidden">
+      <a href="#dashboard">Dashboard</a><a href="#skills">My skills</a><a href="#matches">Matches</a><a href="#requests">Requests</a>
+      <button id="logoutBtn" class="btn btn-light small">Log out</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="welcome" class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">SHARE WHAT YOU KNOW · LEARN WHAT YOU LOVE</span>
+        <h1>Trade skills.<br><span class="gradient-text">Grow together.</span></h1>
+        <p>Meet people who can teach what you want to learn — and learn from what you already know.</p>
+        <div class="hero-points"><span>✓ Free skill exchange</span><span>✓ Real people</span><span>✓ Learn by sharing</span></div>
       </div>
-    </aside>
+      <div class="auth-card">
+        <div class="tabs"><button class="tab active" data-tab="login">Log in</button><button class="tab" data-tab="signup">Create account</button></div>
+        <form id="authForm">
+          <div id="nameWrap" class="field hidden"><label>Your name</label><input id="name" autocomplete="name" placeholder="Enter your name"></div>
+          <div class="field"><label>Email</label><input id="email" type="email" required autocomplete="email" placeholder="you@example.com"></div>
+          <div class="field"><label>Password</label><input id="password" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters"></div>
+          <button id="authSubmit" class="btn btn-primary full" type="submit">Log in</button>
+          <p id="authMessage" class="message" aria-live="polite"></p>
+        </form>
+        <p class="muted tiny">Your account lets you manage your own skills and swap requests.</p>
+      </div>
+    </section>
 
-    <main class="main">
-      <header class="topbar">
-        <div><p class="eyebrow">YOUR COMMUNITY, YOUR GROWTH</p><h1 id="page-title">Dashboard</h1></div>
-        <div class="top-actions"><span class="status-dot"></span><span id="connection-label">Demo mode</span><div id="avatar" class="avatar">G</div></div>
-      </header>
+    <section id="app" class="hidden">
+      <div class="welcome-row">
+        <div><span class="eyebrow">YOUR SKILL-SHARING SPACE</span><h1>Welcome, <span id="userName">learner</span> 👋</h1><p class="muted">Your next skill exchange could start today.</p></div>
+        <div class="profile-chip"><span class="avatar" id="avatar">S</span><span id="profileEmail"></span></div>
+      </div>
 
-      <section id="auth-view" class="auth-layout">
-        <div class="auth-copy">
-          <span class="pill">✦ A community of skill sharing</span>
-          <h2>Learn something.<br><em>Teach something.</em><br>Grow together.</h2>
-          <p>Exchange knowledge with people who have the skills you want — and want the skills you have.</p>
-          <div class="auth-points"><span>✓ Find your skill match</span><span>✓ Learn from real people</span><span>✓ Share what you know</span></div>
-        </div>
-        <div class="auth-card">
-          <div class="auth-tabs"><button id="show-login" class="tab active">Log in</button><button id="show-register" class="tab">Create account</button></div>
-          <form id="login-form">
-            <h3>Welcome back</h3><p class="muted">Log in to continue your learning journey.</p>
-            <label>Email address<input id="login-email" type="email" required placeholder="you@example.com"></label>
-            <label>Password<input id="login-password" type="password" required minlength="6" placeholder="Your password"></label>
-            <button class="primary full" type="submit">Log in <span>→</span></button>
-          </form>
-          <form id="register-form" class="hidden">
-            <h3>Create your account</h3><p class="muted">Join the SkillSwap community.</p>
-            <label>Full name<input id="reg-name" required maxlength="60" placeholder="Your name"></label>
-            <label>Email address<input id="reg-email" type="email" required placeholder="you@example.com"></label>
-            <label>Password<input id="reg-password" type="password" required minlength="6" placeholder="At least 6 characters"></label>
-            <button class="primary full" type="submit">Create account <span>→</span></button>
-          </form>
-          <p id="auth-message" class="message" aria-live="polite"></p>
-          <p class="tiny">You can try the app in demo mode. Add Firebase settings to enable cloud accounts and database storage.</p>
-        </div>
+      <section id="dashboard" class="stats-grid">
+        <article class="stat-card"><span class="stat-icon purple">♧</span><span class="stat-label">Skills listed</span><strong id="statSkills">0</strong></article>
+        <article class="stat-card"><span class="stat-icon peach">✦</span><span class="stat-label">Potential matches</span><strong id="statMatches">0</strong></article>
+        <article class="stat-card"><span class="stat-icon mint">↗</span><span class="stat-label">Requests</span><strong id="statRequests">0</strong></article>
       </section>
 
-      <section id="app-view" class="hidden">
-        <div id="dashboard-page" class="page">
-          <div class="welcome-banner"><div><span class="banner-kicker">YOUR SKILL JOURNEY STARTS HERE</span><h2 id="welcome-title">Welcome to SkillSwap!</h2><p>Share your strengths, discover new interests and find your people.</p><button class="light-btn" data-go="profile">Complete my skills <span>→</span></button></div><div class="banner-art">✦<span>↗</span><b>↔</b></div></div>
-          <div class="stats-grid">
-            <article class="stat-card"><span class="stat-icon lavender">♙</span><p>Community members</p><strong id="stat-users">0</strong></article>
-            <article class="stat-card"><span class="stat-icon pink">✧</span><p>Skills shared</p><strong id="stat-skills">0</strong></article>
-            <article class="stat-card"><span class="stat-icon peach">⇄</span><p>Your matches</p><strong id="stat-matches">0</strong></article>
-          </div>
-          <div class="section-heading"><div><p class="eyebrow">GET STARTED</p><h2>Make your next move</h2></div></div>
-          <div class="quick-grid">
-            <button class="quick-card" data-go="profile"><span class="quick-icon">✎</span><strong>Add your skills</strong><small>Tell the community what you can teach and want to learn.</small><b>Update profile →</b></button>
-            <button class="quick-card" data-go="people"><span class="quick-icon">◎</span><strong>Explore people</strong><small>Browse members and discover useful skills.</small><b>Explore community →</b></button>
-            <button class="quick-card" data-go="matches"><span class="quick-icon">⇄</span><strong>Find your match</strong><small>See people whose skills complement yours.</small><b>View matches →</b></button>
-          </div>
-        </div>
-
-        <div id="profile-page" class="page hidden">
-          <div class="section-heading"><div><p class="eyebrow">YOUR PROFILE</p><h2>What can you exchange?</h2><p class="muted">Add skills you can teach and skills you would love to learn.</p></div></div>
-          <form id="profile-form" class="panel form-panel">
-            <div class="form-grid">
-              <label>Full name<input id="profile-name" required maxlength="60"></label>
-              <label>Phone number <span class="optional">(optional)</span><input id="profile-phone" type="tel" placeholder="+91 98765 43210"></label>
-              <label class="span-2">About you<textarea id="profile-bio" rows="3" maxlength="300" placeholder="A little about your interests..."></textarea></label>
-              <label class="span-2">Skills I can teach <span class="hint">(separate multiple skills with commas)</span><input id="teach-skills" required placeholder="e.g. Python, Graphic Design, Excel"></label>
-              <label class="span-2">Skills I want to learn <span class="hint">(separate multiple skills with commas)</span><input id="learn-skills" required placeholder="e.g. Photography, Public Speaking"></label>
-              <label>Preferred learning mode<select id="profile-mode"><option>Any</option><option>Online</option><option>In person</option></select></label>
-              <label>City / area <span class="optional">(optional)</span><input id="profile-city" placeholder="e.g. Visakhapatnam"></label>
-            </div>
-            <div class="form-footer"><span class="muted tiny">Your email is used for sign-in. Contact details are shown on match cards.</span><button class="primary" type="submit">Save my profile →</button></div>
-            <p id="profile-message" class="message"></p>
-          </form>
-        </div>
-
-        <div id="people-page" class="page hidden">
-          <div class="section-heading"><div><p class="eyebrow">THE COMMUNITY</p><h2>Explore people</h2><p class="muted">Browse member profiles and the skills they share.</p></div><input id="people-search" class="search" placeholder="Search name or skill..."></div>
-          <div id="people-list" class="people-grid"></div>
-        </div>
-
-        <div id="matches-page" class="page hidden">
-          <div class="section-heading"><div><p class="eyebrow">GOOD THINGS HAPPEN TOGETHER</p><h2>Your skill matches</h2><p class="muted">A match appears when someone can teach what you want to learn and you can teach what they want to learn.</p></div></div>
-          <div id="matches-list" class="people-grid"></div>
-        </div>
+      <section id="skills" class="panel">
+        <div class="section-heading"><div><span class="eyebrow">START WITH YOU</span><h2>Your skills</h2><p class="muted">Tell the community what you can teach and what you want to learn.</p></div></div>
+        <form id="skillForm" class="skill-form">
+          <div class="field"><label>Skill name</label><input id="skillName" required placeholder="e.g. Python, guitar, cooking"></div>
+          <div class="field"><label>I want to…</label><select id="skillType"><option value="teach">Teach this skill</option><option value="learn">Learn this skill</option></select></div>
+          <div class="field"><label>Level (optional)</label><select id="skillLevel"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div>
+          <button class="btn btn-primary" type="submit">+ Add skill</button>
+        </form>
+        <div id="mySkills" class="skill-list empty-state">Your skills will appear here.</div>
       </section>
-      <footer>© 2026 SkillSwap <span>Built for sharing knowledge.</span></footer>
-    </main>
-  </div>
+
+      <section id="matches" class="panel">
+        <div class="section-heading"><div><span class="eyebrow">GOOD CONNECTIONS START HERE</span><h2>Skill matches</h2><p class="muted">People whose teaching and learning interests complement yours.</p></div><button id="refreshBtn" class="btn btn-light">↻ Refresh</button></div>
+        <div id="matchList" class="cards-grid empty-state">Add at least one teaching skill and one learning skill to discover matches.</div>
+      </section>
+
+      <section id="requests" class="panel">
+        <div class="section-heading"><div><span class="eyebrow">MAKE IT HAPPEN</span><h2>Swap requests</h2><p class="muted">Manage invitations and connect after a request is accepted.</p></div></div>
+        <div class="request-columns"><div><h3>Incoming</h3><div id="incomingList" class="stack empty-state">No incoming requests yet.</div></div><div><h3>Sent by you</h3><div id="outgoingList" class="stack empty-state">No sent requests yet.</div></div></div>
+      </section>
+
+      <section class="panel profile-panel">
+        <div><span class="eyebrow">LET PEOPLE REACH YOU</span><h2>Your profile</h2><p class="muted">Your contact detail is shown only to the other person after a swap request is accepted.</p></div>
+        <form id="profileForm" class="profile-form">
+          <div class="field"><label>Display name</label><input id="profileName" required></div>
+          <div class="field"><label>City / area</label><input id="city" placeholder="e.g. Vijayawada"></div>
+          <div class="field"><label>Short introduction</label><input id="bio" placeholder="A little about you"></div>
+          <div class="field"><label>Contact (phone / Instagram / other)</label><input id="contact" placeholder="Add a way to contact you"></div>
+          <button class="btn btn-primary" type="submit">Save profile</button>
+          <p id="profileMessage" class="message" aria-live="polite"></p>
+        </form>
+      </section>
+    </section>
+  </main>
+  <footer>SkillSwap · Learn from each other, grow together.</footer>
   <div id="toast" class="toast" role="status"></div>
-  <script type="module" src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
